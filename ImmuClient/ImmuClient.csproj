@@ -13,9 +13,10 @@
     </PackageReference>
   </ItemGroup>
 
-
   <ItemGroup>
     <Protobuf Include="Protos\schema.proto" GrpcServices="Client" />
   </ItemGroup>
+
+
 
 </Project>

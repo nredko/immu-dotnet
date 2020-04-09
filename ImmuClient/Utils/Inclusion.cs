@@ -25,9 +25,9 @@ namespace ImmuClient.Utils
             );
         }
 
-        public static bool VerifyPath(List<byte[]> path, ulong at, ulong i, byte[] root, byte[] leaf)
+        public static bool VerifyPath(IEnumerable<byte[]> path, ulong at, ulong i, byte[] root, byte[] leaf)
         {
-            if (i > at || (at > 0 && path.Count == 0))
+            if (i > at || (at > 0 && path.Count() == 0))
                 return false;
 
             var h = leaf;

@@ -17,8 +17,6 @@ import "google/protobuf/empty.proto";
 
 package immudb.schema;
 
-option go_package = "github.com/codenotary/immudb/pkg/api/schema";
-
 message Key {
 	bytes key = 1;
 }
@@ -26,6 +24,15 @@ message Key {
 message KeyValue {
 	bytes key = 1;
 	bytes value = 2;
+}
+
+message StructuredKeyValue {
+	bytes key = 1;
+	Content value = 2;
+}
+message Content {
+	uint64 timestamp = 1;
+	bytes payload = 2;
 }
 
 message Index {
@@ -38,8 +45,17 @@ message Item {
 	uint64 index = 3;
 }
 
+message StructuredItem {
+	bytes key = 1;
+	Content value = 2;
+	uint64 index = 3;
+}
+
 message KVList {
 	repeated KeyValue KVs = 1;
+}
+message SKVList {
+	repeated StructuredKeyValue KVs = 1;
 }
 
 message KeyList {
@@ -48,6 +64,10 @@ message KeyList {
 
 message ItemList {
 	repeated Item items = 1;
+}
+
+message StructuredItemList {
+	repeated StructuredItem items = 1;
 }
 
 message Root {
@@ -99,9 +119,17 @@ message SafeItem {
 	Item item = 1;
 	Proof proof = 2;
 }
+message SafeStructuredItem {
+	StructuredItem item = 1;
+	Proof proof = 2;
+}
 
 message SafeSetOptions {
 	KeyValue kv = 1;
+	Index rootIndex = 2;
+}
+message SafeSetSVOptions {
+	StructuredKeyValue skv = 1;
 	Index rootIndex = 2;
 }
 
@@ -116,17 +144,26 @@ message HealthResponse {
 
 service ImmuService {
 	rpc Set (KeyValue) returns (Index);
+	rpc SetSV (StructuredKeyValue) returns (Index);
 	rpc SafeSet(SafeSetOptions) returns (Proof);
-	rpc SetBatch (KVList) returns (Index);
+	rpc SafeSetSV(SafeSetSVOptions) returns (Proof);
 	rpc Get (Key) returns (Item);
+	rpc GetSV (Key) returns (StructuredItem);
 	rpc SafeGet(SafeGetOptions) returns (SafeItem);
+	rpc SafeGetSV(SafeGetOptions) returns (SafeStructuredItem);
+	rpc SetBatch (KVList) returns (Index);
+	rpc SetBatchSV (SKVList) returns (Index);
 	rpc GetBatch (KeyList) returns (ItemList);
+	rpc GetBatchSV (KeyList) returns (StructuredItemList);
 	rpc Scan(ScanOptions) returns (ItemList);
+	rpc ScanSV(ScanOptions) returns (StructuredItemList);
 	rpc Count(KeyPrefix) returns (ItemsCount);
 	rpc CurrentRoot(google.protobuf.Empty) returns (Root);
 	rpc Inclusion(Index) returns (InclusionProof);
 	rpc Consistency(Index) returns (ConsistencyProof);
 	rpc ByIndex(Index) returns (Item);
+	rpc ByIndexSV(Index) returns (StructuredItem);
 	rpc History(Key) returns (ItemList);
+	rpc HistorySV(Key) returns (StructuredItemList);
 	rpc Health (google.protobuf.Empty) returns (HealthResponse);
 }

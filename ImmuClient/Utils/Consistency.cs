@@ -31,9 +31,9 @@ namespace ImmuClient.Utils
 
             return false;
         }
-        public static bool VerifyPath(List<byte[]> path, ulong second, ulong first, byte[] secondHash, byte[] firstHash)
+        public static bool VerifyPath(IEnumerable<byte[]> path, ulong second, ulong first, byte[] secondHash, byte[] firstHash)
         {
-            var l = path.Count;
+            var l = path.Count();
             if (first == second && firstHash.SequenceEqual(secondHash) && l == 0)
                 return true;
 
